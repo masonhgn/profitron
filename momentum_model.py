@@ -37,53 +37,45 @@ def create_10_day_momentum_map():
         momentum = (last_10_days[-1] - last_10_days[0]) / last_10_days[-1]
         momentum_map[ticker] = momentum
     return momentum_map
+            
 
-
-def calculate_momentum():
-    today_file_name = datetime.now().strftime("%Y-%m-%d") + '_momentum_map.json'
+def create_file(file_type_name, map_func):
+    today_file_name = datetime.now().strftime("%Y-%m-%d_") + file_type_name +  '.json'
     if os.path.isfile(today_file_name):
         with open(today_file_name, 'r') as json_file:
             retrieved_data = json.load(json_file)
             return retrieved_data
     else:
-        print('Up to date file of S&P500 momentums not found. Creating new one...')
-        new_map = create_10_day_momentum_map()
+        print('Up to date file not found. Creating new one...')
+        new_map = map_func()
         with open(today_file_name, 'w') as json_file:
             json.dump(new_map, json_file)
         return new_map
 
 
-#price_map = create_10_day_momentum_map()
-#price_map = sorted(price_map.items(), key=lambda x:x[1], reverse = True)
+sp_500_momentums = create_file('sp_500_momentums', create_10_day_momentum_map)
+sp_500_momentums = sorted(sp_500_momentums.items(), key=lambda x:x[1], reverse = True)
 
-#for item in price_map:
-#    print(item)
 
-price_map = calculate_momentum()
-price_map = sorted(price_map.items(), key=lambda x:x[1], reverse = True)
-
-def get_top_10_percent():
+def get_top_n_percent(map, n):
+    if n > 0.99 or n < 0.01:
+        print('cannot get '+n+'% of numbers. please input a different value for n (0.01 <= n <= 0.99')
+        return
+    if len(map) < 1:
+        print('map passed into get_top_n_percent is empty')
+        return
     result = []
-    num_securities = int(len(price_map) / 10)
+    num_securities = int(len(map) * n)
     count = 1
-    for item in price_map:
-        if count > 10: break
+    for item in map:
+        if count > num_securities: break
         result.append(item)
         count += 1
     return result
 
-top_ten_list = get_top_10_percent()
-for item in top_ten_list:
+
+
+top_10_list = create_file(get_top_n_percent(sp_500_momentums, 0.1))
+for item in top_10_list:
     print(item)
-
-
-
-
-
-
-
-
-
-
-
 

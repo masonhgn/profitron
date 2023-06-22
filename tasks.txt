@@ -1,0 +1,4 @@
+1. figure out the best way to make trade signals by looking at each generated list of tickers
+2. can we make this class based?
+3. clean up the code
+4. connect it to the api
