@@ -1,14 +1,14 @@
-from TradingStrategy import TradingStrategy
+from trading_strategies import TradingStrategy
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-import collect_sp_500_data
+from data_collection import collect_sp_500_data
 import os.path
 import json
 
 
 
-class TopTenMomentum(TradingStrategy):
+class TopTenMomentum(TradingStrategy.TradingStrategy):
     def __init__(self):
         TradingStrategy.__init__(self)
 

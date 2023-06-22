@@ -1,4 +1,4 @@
-from collect_sp_500_data import collect_data
+from data_collection.collect_sp_500_data import collect_data
 
 tickers = collect_data()
 

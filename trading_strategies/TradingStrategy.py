@@ -1,7 +1,7 @@
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-import collect_sp_500_data
+from data_collection import collect_sp_500_data
 import os.path
 import json
 
