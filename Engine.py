@@ -3,8 +3,9 @@ from TradeMaker import TradeMaker
 
 def main():
     print('welcome to the trading desk.')
-    trader = TradeMaker()
-    trader.get_cash_available()
+    strat = TopTenMomentum()
+    strat.generate_portfolio()
+    strat.print_portfolio()
 
 if __name__ == "__main__":
     main()

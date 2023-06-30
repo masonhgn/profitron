@@ -72,7 +72,6 @@ class TradingStrategy:
                 trades.append('BUY ' + item[0])
 
         return trades
-        
 
     def get_top_n_percent(self, map, n):
         if n > 0.99 or n < 0.01:
@@ -90,5 +89,11 @@ class TradingStrategy:
             count += 1
         return result
     def print_portfolio(self):
+        if not self.portfolio:
+            print('cannot print portfolio. portfolio has not been created yet')
+            return
+        if len(self.portfolio) == 0:
+            print('cannot print portolio. portfolio is empty')
+            return
         for item in self.portfolio:
             print(item[0])
