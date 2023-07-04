@@ -1,4 +1,4 @@
-# Trading Engine
+# The Profitron
 
 This is a summer project I've started so I could become more familiar with quantitative finance / algorithmic trading. It's my first real attempt at creating a fully functioning, automated trading project so there will be difficulties as I am not using any singular guideline, just whatever books and free resources I find. At the bottom I will include sources to books that I found most helpful in creating this.
 
