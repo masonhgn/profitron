@@ -1,11 +1,17 @@
 # Trading Engine
 
-This is a simple trading engine running on Python3.
+This is a summer project I've started so I could become more familiar with quantitative finance / algorithmic trading. It's my first real attempt at creating a fully functioning, automated trading project so there will be difficulties as I am not using any singular guideline, just whatever books and free resources I find. At the bottom I will include sources to books that I found most helpful in creating this.
+
+This project is, in essence, a small library of tools meant to gather financial data and provide meaningful information about that financial data, including trading signals and also automated tools to make those trades. Here is a list of API's used:
+
+1. Yahoo Finance API (for gathering financial data, prices, historical data, etc.)
+2. Tradier Brokerage API (for actually making the trades, this is connected to a Tradier brokerage account)
+
 
 ### Directory Structure
 
 - core:
-	contains the files that run the engine, specifically Engine.py which is the main file.
+	contains main files for the project, specifically Engine.py which is the main file.
 
 - trading_strategies:
 	contains the all trading strategies. These are classes that inherit the TradingStrategy class.
