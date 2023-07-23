@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 
 
-def basic_correlation(start_date=datetime.now()-timedelta(days=30), end_date = datetime.now(), stock1, stock2):
+def basic_correlation(stock1, stock2, start_date=datetime.now()-timedelta(days=30), end_date = datetime.now()):
 
     data = yf.download([stock1, stock2], start=start_date, end=end_date)['Adj Close']
 
@@ -25,3 +25,23 @@ def basic_correlation(start_date=datetime.now()-timedelta(days=30), end_date = d
     similarity_percentage = abs(correlation) * 100
 
     return similarity_percentage
+
+
+
+def bollinger_bands(ticker, period=20, stdev=2):
+    stock = yf.Ticker(ticker)
+    history = stock.history(period=f"{period}d")
+
+    #get rolling mean and std. deviation
+    prices = history['Close']
+    rolling_mean = prices.rolling(window=period).mean()
+    rolling_std = prices.rolling(window=period).std()
+
+    #upper and lower bands calculated by adding/subtracting (stdev) standard devations from rolling mean
+    upper_band = rolling_mean + (rolling_std * stdev)
+    lower_band = rolling_mean - (rolling_std * stdev)
+
+    #get last price
+    current_price = prices[-1]
+    
+    return [current_price, lower_band[-1], upper_band[-1]]
