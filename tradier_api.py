@@ -1,6 +1,6 @@
 import requests
 
-class TradeMaker:
+class ApiBridge:
     def __init__(self):
         self.token = 'mUoTZU1LAk3yMgOIyLSfJwdNnwAr'
         self.account_number = '6YA32927'
@@ -48,4 +48,12 @@ class TradeMaker:
     def liquidate(self):
         pass
         #get portfolio, sell all of it.
+
+    def limit_order(self):
+        pass
+        #limit order
+
+    def market_order(self):
+        pass
+        #market order
         
