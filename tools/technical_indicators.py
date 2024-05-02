@@ -152,3 +152,8 @@ def bollinger_bands(ticker, period=20, stdev=2):
     current_price = prices[-1]
     
     return [current_price, lower_band[-1], upper_band[-1]]
+
+
+
+
+#def adf_stationarity(ticker, start_date, end_date)

@@ -4,9 +4,9 @@ class TradingStrategy:
 
     def calculate(self):
         '''
-        1. determine asset class / index and create a list of tickers to work from
-        2. from that, use tools library to generate a dataframe for necessary stocks with all relevant indicators
-        3. generate a 'Signal' column for the dataframe based on relevant indicators
+        1. determine investment universe
+        2. from that, gather all necessary data to make an informed trading signal (1 for long, -1 for short)
+        3. output the signal along with all relevant data in a single df row, adding to self.dataframe
         
         '''
         raise NotImplementedError("Subclasses must implement this method.")

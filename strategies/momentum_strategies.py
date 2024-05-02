@@ -8,6 +8,8 @@ class MomentumTradingStrategy(TradingStrategy):
         self.start_date = start_date
         self.end_date = end_date
         self.data = None
+
+        
     def calculate(self):
         short_sma = rolling_sma(self.ticker, 30, self.start_date, self.end_date)
         long_sma = rolling_sma(self.ticker, 90, self.start_date, self.end_date)
