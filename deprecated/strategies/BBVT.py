@@ -19,7 +19,7 @@ class BBVT(TradingStrategy):
 
     def calculate(self):
         vmp = 1 #volatility multiplier
-        self.universe = ['COIN']
+        self.universe = ['SNAP']
 
         for ticker in self.universe:
 

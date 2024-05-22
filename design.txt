@@ -1,0 +1,40 @@
+
+
+trading system components:
+
+1. data collection and processing (library of functions)
+    - contains functions for gathering data with different formats and parameters
+2. analysis and filtering (library of functions)
+    - contains functions for quick statistical analysis
+    - can filter a dataframe based on different parameters
+3. trading api bridge
+    - contains functions to make trades, fetch portfolio metrics, etc.
+4. pipeline
+
+    frequency: string ['1d','2d','1w' etc.]
+    this is how often we will rebalance
+    
+    next_trading_day:
+    each time we rebalance, we set this to the today + frequency. so if we rebalance
+    on 4/20/2024, and our frequency is 4d, we will set next_trading_day to 4/24/2024.
+
+    remember, if that falls on a non trading day (weekend, holiday, etc.) it will be
+    fine since the rebalance() functions check for this.
+
+    - generate_pairs(start_date, end_date) function which will do statistical analysis to generate likely cointegrated pairs
+        based on time series data of investment_universe from start_date to end_date.
+
+        defining the start_date and end_date parameters make it to where we can use this function for generating current signals and also
+        to backtest.
+
+    - generate_signals() function which will connect everything and generate a signal for a single day based on the current
+        set of pairs.
+    
+    - rebalance() function which will rebalance by calling generate_pairs, then generating signals with those pairs, then
+        calling trade functions based on those signals.
+
+
+    - backtest(start_date, end_date) function self explanatory
+        this will simulate the trading strategy being done from start_date to end_date, starting with a balance of $100000 and
+        updating it daily based on the signal generated. we will generate important metrics such as sharpe and max drawdown.
+
