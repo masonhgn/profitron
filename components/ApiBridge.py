@@ -1,59 +1,94 @@
 import requests
 
 class ApiBridge:
-    def __init__(self):
-        self.token = 'mUoTZU1LAk3yMgOIyLSfJwdNnwAr'
-        self.account_number = '6YA32927'
+    def __init__(self, production):
+        self.reinit(production)
+
+    def reinit(self,production):
+        """toggles between sandbox mode and live mode"""
+        self.production = production
+
+        self.token = 'mUoTZU1LAk3yMgOIyLSfJwdNnwAr' if self.production else 'LUiHZ2fsw2f8lfptk0UTmLH5BnrX'
+        self.url = 'https://api.tradier.com' if self.production else 'https://sandbox.tradier.com'
+        self.account_number = '6YA32927' if self.production else 'VA43237255'
+        self.headers = headers={'Authorization': 'Bearer '+self.token, 'Accept': 'application/json'}
+
+
+
+
     def check_status(self):
-        response = requests.get('https://api.tradier.com/v1/user/profile',
-        params={},
-        headers={'Authorization': 'Bearer '+self.token, 'Accept': 'application/json'}
-        )
-        json_response = response.json()
-        return response.status_code == 200
+        """gets account status"""
+        return requests.get(
+            f'{self.url}/v1/user/profile',
+            params={},
+            headers=self.headers
+        ).json()
 
-    def get_account_info(self):
-        response = requests.get('https://api.tradier.com/v1/user/profile',
-        params={},
-        headers={'Authorization': 'Bearer '+self.token, 'Accept': 'application/json'}
-        )
-        json_response = response.json()
-        print(response.status_code)
-        print(json_response)
 
-    def get_balance(self):
-        response = requests.get('https://api.tradier.com/v1/accounts/'+self.account_number+'/balances',
-        params={},
-        headers={'Authorization': 'Bearer '+self.token, 'Accept': 'application/json'}
-        )
-        if response.status_code != 200:
-            print('api call during get_balance function call unsuccessful: ' + response.status_code)
-            return None
-        json_response = response.json()
-        return json_response
 
-    def get_cash_available(self):
-        balance = self.getBalance()
-        print(balance['cash_available'])
+    def get_balance_metrics(self):
+        """returns all balance metrics of account"""
+        return requests.get(
+            f'{self.url}/v1/accounts/'+self.account_number+'/balances',
+            params={},
+            headers=self.headers
+        ).json()
+
+
+
 
     def get_positions(self):
-        response = requests.get('https://api.tradier.com/v1/accounts/'+self.account_number+'/positions',
-        params={},
-        headers={'Authorization': 'Bearer <TOKEN>', 'Accept': 'application/json'}
-        )
-        json_response = response.json()
-        print(response.status_code)
-        return json_response
+        """gets all current positions"""
+        return requests.get(
+            f'{self.url}/v1/accounts/'+self.account_number+'/positions',
+            params={},
+            headers=self.headers
+        ).json()
+
+
 
     def liquidate(self):
+        """liquidates entire portfolio"""
         pass
         #get portfolio, sell all of it.
 
-    def limit_order(self):
-        pass
-        #limit order
 
-    def market_order(self):
-        pass
-        #market order
-        
+
+
+    def equity_limit_order(self, symbol, side, quantity, duration, price):
+        """place a limit equity order"""
+        response = requests.get(
+            f'{self.url}/v1/accounts/'+self.account_number+'/orders',
+            params={
+                'class':'equity',
+                'symbol':symbol,
+                'side':side,
+                'quantity':str(quantity),
+                'type':'limit',
+                'duration':duration,
+                'price': str(price)
+            },
+            headers=self.headers
+        ).json()
+
+        return response
+
+
+
+
+    def equity_market_order(self, symbol, side, quantity, duration):
+        """place a market equity order"""
+        response = requests.get(
+            f'{self.url}/v1/accounts/'+self.account_number+'/orders',
+            params={
+                'class':'equity',
+                'symbol':symbol,
+                'side':side,
+                'quantity':quantity,
+                'type':'market',
+                'duration':duration
+            },
+            headers=self.headers
+        ).json()
+
+        return response
