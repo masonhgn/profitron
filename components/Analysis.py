@@ -9,6 +9,7 @@ from statsmodels.tsa.stattools import coint, adfuller
 from matplotlib import pyplot as plt
 
 
+
 class Analysis(object):
     def __new__(cls):
         if not hasattr(cls, 'instance'):
@@ -57,7 +58,10 @@ class Analysis(object):
         return self.check_cointegration(series1,series2)[1]
 
 
-
+    def hedge_ratio(self, series1: np.array, series2: np.array):
+        X = sm.add_constant(series2)
+        model = sm.OLS(X,series1).fit()
+        return model.params
 
 
 

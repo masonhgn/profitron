@@ -2,7 +2,10 @@ import pandas as pd
 import pandas_datareader as pdr
 import numpy as np
 import yfinance as yf
-from datetime import datetime as dt
+import datetime
+from DataCollection import DataCollection
+from Analysis import Analysis
+from ApiBridge import ApiBridge
 
 
 '''
@@ -43,9 +46,15 @@ for each pair:
 class StatArb(object):
 
     def __init__(self):
-        self.universe: list = ['XOM','CVX',]
+        self.universe: list = ['XOM','CVX']
+        self.pairs = [['XOM','CVX']]
         self.frequency: str = '3d'
-        self.next_trading_date = dt.now()
+        self.next_trading_date = datetime.datetime.now()
+        self.data = DataCollection()
+        self.analysis = Analysis()
+        self.api = ApiBridge(production=False)
+        self.lookback = 20
+        
 
     def rebalance(self) -> None:
         """rebalances portfolio, calls generate_signal"""
@@ -54,13 +63,53 @@ class StatArb(object):
     
 
     
-    def generate_signal(self) -> dict:
+    def generate_signal(self, date: datetime.date = datetime.date.today(), last_signal: int = 0) -> dict:
         """core of trading strategy, generates signals for every ticker in universe"""
-        pass
+        
+        #gather historical data needed to create current day's signal
+        historical = self.data.closing_prices_multi(self.universe, date - datetime.timedelta(days=self.lookback*3), date)
+        hedge_ratios = []
+        for i in range(len(self.pairs)):
+            X, Y = historical[self.pairs[i][0]], historical[self.pairs[i][1]]
+
+            assert len(X) == len(Y)
+
+            for j in range(-self.lookback, 0): hedge_ratios.append(self.analysis.hedge_ratio(X[j-self.lookback:j],Y[j-self.lookback:j])[0][1])
+
+            X, Y, hedge_ratios = np.array(X[-20:]), np.array(Y[-20:]), np.array(hedge_ratios)
+
+            spreads = Y - hedge_ratios * X
+
+            cur_spread = spreads[-1]
+
+            zscore = (cur_spread - spreads.mean()) / spreads.std()
+
+            if last_signal == -1 and zscore < 0: #if we are currently shorting the spread and the spread is < historical average, exit
+                signal = 0
+            elif last_signal == 1 and zscore > 0: #if we are currently long the spread and the spread is > historical average, exit
+                signal = 0
+            elif last_signal != 1 and zscore < -1: #if we are not long the spread and spread is >= 1 std dev. below historical average, enter long poisition
+                signal = 1
+            elif last_signal != -1 and zscore > 1: #if we are not short and the spread is >= 1 std dev. above historical average, enter short position
+                signal = -1
+
+            return signal
+
+
+
+                
+        
 
 
     def backtest(self, start_date: str, end_date: str) -> dict:
         """backtests the trading strategy by calling generate_signal() from start_date to end_date with respect to self.frequency"""
         pass
 
-    
+
+
+
+
+if __name__ == "__main__":
+    arb = StatArb()
+    print(datetime.datetime.now())
+    arb.generate_signal()
