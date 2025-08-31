@@ -1,0 +1,117 @@
+design for trading system
+
+overview:
+this system is a modular, broker-agnostic quantitative trading engine designed to support:
+- backtesting
+- paper/live trading
+- signal-driven strategy execution
+- multi-broker orchestration
+- yaml-driven configuration
+
+each major component is its own module, testable in isolation and pluggable in deployment.
+
+--------------------------------------------------------------------------------
+
+components:
+
+1. alpha research
+    - [research/] (currently placeholder)
+    - meant for ad-hoc analysis, exploratory code, and alpha generation
+    - not yet implemented
+
+2. strategy layer
+    - [strategy/]
+    - abstract base class `TradingStrategy` defines `generate_signals(data: pd.DataFrame) -> List[Signal]`
+    - strategy subclasses (e.g., CointegrationStrategy) produce signal objects with rich metadata
+    - strategy configs (params, universe) loaded from yaml
+
+3. signal layer
+    - [signal/]
+    - `Signal`: a standardized object representing trade intent
+        - includes symbol, action, asset type, quantity, order type, optional metadata
+    - `SignalMonitor`: polls data and calls `generate_signals()` on the strategy
+        - returns `List[Signal]` on each poll
+        - works in live/paper mode
+
+4. data management
+    - [data/]
+    - `DataSource` base class defines a unified interface for price/fundamental/event access
+    - `LocalFileSource`: fetches from compressed parquet store, supports archival
+    - `BinanceUSSource`: fetches historical and live data via ccxt
+    - `DataManager`: routes requests to sources, supports fallback and write-back
+
+5. execution system
+    - [execution/]
+    - `OrderManager`: tracks live orders, cancels stale ones, optionally replaces with market orders
+    - `Executor`: previously responsible for handling signals, now functionality delegated to `BrokerContext`
+
+6. portfolio layer
+    - [portfolio/]
+    - `LivePortfolio`: tracks real-time positions, cost basis, pnl, equity
+    - `MetaPortfolio`: tracks multiple brokers' portfolios, aggregates exposures and equity
+    - `PortfolioManager`: legacy backtest-only class (used by Backtester)
+
+7. broker layer
+    - [brokers/]
+    - `BrokerContext`: encapsulates a full connection to a broker
+        - holds: api client, `LivePortfolio`, `OrderManager`
+        - provides: `place_order(signal)`, `sync()`
+    - supports multi-broker execution (e.g., crypto on binanceus, equities on alpaca)
+
+8. backtester
+    - [backtest/]
+    - `Backtester`: simulates signal-driven strategies over historical data
+    - uses `PortfolioManager` for sizing and execution
+    - results include cumulative pnl, stats, position time series
+
+9. core engine
+    - [core/]
+    - `Engine`: the main control class
+        - loads config
+        - initializes strategy, monitor, MetaPortfolio, brokers
+        - runs system in: live, paper, or backtest mode
+        - controls polling loop and routing of signals to brokers
+    - controlled via `main.py`
+
+--------------------------------------------------------------------------------
+
+configuration (yaml):
+
+each major component reads from a config section:
+
+- strategies:
+    - entry/exit zscores, lookback window, asset pairs, hedge ratios, etc
+
+- monitor:
+    - poll frequency, data source, lookback window
+
+- brokers:
+    - per-broker api keys, timeouts, mode, starting cash
+    - mapped to asset types (e.g. crypto → binanceus)
+
+- data:
+    - local file source location, duckdb settings
+
+- execution:
+    - default sizing rules, cancel/replace settings
+
+- backtesting:
+    - start/end date, capital, slippage, commissions
+
+- engine:
+    - mode (backtest, paper, live)
+    - print_summary, logging options
+
+--------------------------------------------------------------------------------
+
+todo:
+    - add structured logging (to console + file)
+    - add runtime dashboard (e.g., fastapi or streamlit)
+    - expand config system (hierarchical engine-level + overrides)
+    - add multi-strategy orchestration
+    - alerting / monitoring pipeline???
+
+--------------------------------------------------------------------------------
+
+
+

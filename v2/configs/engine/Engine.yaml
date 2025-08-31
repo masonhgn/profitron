@@ -1,0 +1,63 @@
+# Engine configuration - supports both paper and live trading modes
+mode: backtest  # paper, live, or backtest
+
+# Broker configurations
+brokers:
+  # Paper trading brokers
+  paper:
+    alpaca:
+      type: alpaca
+      api_key: ${ALPACA_API_KEY}
+      api_secret: ${ALPACA_API_SECRET}
+      mode: paper
+      starting_cash: 10000
+    ibkr:
+      type: ibkr
+      host: 127.0.0.1
+      port: 5002  # Your TWS API port
+      client_id: 1
+      paper_account_id: ${IBKR_PAPER_ACCOUNT_ID}
+      mode: paper
+      starting_cash: 10000
+  
+  # Live trading brokers
+  live:
+    alpaca:
+      type: alpaca
+      api_key: ${ALPACA_API_KEY}
+      api_secret: ${ALPACA_API_SECRET}
+      mode: live
+    ibkr:
+      type: ibkr
+      host: 127.0.0.1
+      port: 5002  # Your TWS API port
+      client_id: 1
+      live_account_id: ${IBKR_LIVE_ACCOUNT_ID}
+      mode: live
+
+# Backtest configuration
+backtest:
+  params:
+    start_date: "2024-01-01"
+    end_date: "2024-12-31"
+    capital: 100000
+    slippage_bps: 5.0
+    commission_per_trade: 1.0
+    rebalance_frequency: "daily"
+    bid_ask_spread_bps: 5.0
+    min_trade_size: 100.0
+    max_position_size: 0.5
+
+# Data sources
+data_sources:
+  equity:
+    api_key: ${ALPACA_API_KEY}
+    api_secret: ${ALPACA_API_SECRET}
+    provider: alpaca
+  crypto:
+    api_key: ${BINANCEUS_API_KEY}
+    api_secret: ${BINANCEUS_API_SECRET}
+    provider: binanceus
+
+# Engine settings
+print_summary: true

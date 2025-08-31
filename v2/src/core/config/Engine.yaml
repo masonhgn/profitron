@@ -1,0 +1,59 @@
+backtest:
+  params:
+    capital: 10000
+    commission_per_trade: 1.0
+    end_date: '2025-04-10'
+    slippage_bps: 10
+    bid_ask_spread_bps: 5
+    start_date: '2020-04-10'
+    min_trade_size: 100
+    max_position_size: 0.5
+brokers:
+  paper:
+    alpaca:
+      type: alpaca
+      api_key: ${ALPACA_API_KEY}
+      api_secret: ${ALPACA_API_SECRET}
+      mode: paper
+      starting_cash: 10000
+  live:
+    binanceus:
+      type: binanceus
+      api_key: ${BINANCEUS_API_KEY}
+      api_secret: ${BINANCEUS_API_SECRET}
+      mode: live
+      order_timeout: 30
+data_sources:
+  crypto:
+    api_key: ${BINANCEUS_API_KEY}
+    api_secret: ${BINANCEUS_API_SECRET}
+    provider: binanceus
+  equity:
+    api_key: ${ALPACA_API_KEY}
+    api_secret: ${ALPACA_API_SECRET}
+    provider: alpaca
+mode: paper
+print_summary: true
+signal_monitor:
+  fields:
+  - close
+  - open
+  - high
+  - low
+  - volume
+  frequency: 1h
+  lookback_window: 100
+  poll_interval: 3600
+strategy:
+  name: CointegrationStrategy
+  module: strategies.equities.mean_reversion.CointegrationStrategy
+  params:
+    asset_1: ETHA
+    asset_2: ETHV
+    lookback_bars: 15
+    entry_z: 1.8
+    exit_z: 0.5
+    frequency: 1h
+    poll_interval: 3600
+    fields: [open, high, low, close, volume]
+    hedge_ratio_method: ols

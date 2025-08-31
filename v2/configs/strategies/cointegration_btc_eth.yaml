@@ -1,0 +1,27 @@
+strategy:
+  name: CointegrationStrategy
+  module: strategies.equities.mean_reversion.CointegrationStrategy
+  brokerage: alpaca  # Specify which brokerage to use
+  params:
+    asset_1: ETHA
+    asset_2: ETHV
+    lookback_bars: 20
+    entry_z: 2.0
+    exit_z: 0.3
+    frequency: 1h
+    poll_interval: 30
+    fields: [open, high, low, close, volume]
+    hedge_ratio_method: ols
+
+# Backtest configuration
+backtest:
+  params:
+    start_date: "2024-01-01"
+    end_date: "2024-12-31"
+    capital: 100000
+    slippage_bps: 5.0
+    commission_per_trade: 1.0
+    rebalance_frequency: "daily"
+    bid_ask_spread_bps: 5.0
+    min_trade_size: 100.0
+    max_position_size: 0.5 

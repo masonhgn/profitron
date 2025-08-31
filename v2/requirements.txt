@@ -1,0 +1,14 @@
+alpaca-py
+numpy
+yfinance
+matplotlib
+statsmodels
+ccxt
+pandas
+pyyaml
+pyarrow
+duckdb
+pandas_market_calendars
+python-dotenv
+tqdm
+ibapi
